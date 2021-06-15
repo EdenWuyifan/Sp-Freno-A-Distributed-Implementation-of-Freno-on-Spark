@@ -7,24 +7,13 @@ from utils import distFreno
 import time
 import os
 import numpy as np
-#import argparse
 
 memory = '10g'
 pyspark_submit_args = ' --driver-memory ' + memory + ' pyspark-shell'
 os.environ["PYSPARK_SUBMIT_ARGS"] = pyspark_submit_args
 os.environ["PYTHONHASHSEED"]=str(232)
-'''
-parser = argparse.ArgumentParser(description='argparse')
-parser.add_argument('--database', '-d', help='database name', required=True)
-parser.add_argument('--minsup', '-m', help='min support percentage', required=True)
-parser.add_argument('--partition', '-p', help='num of workers', required=True)
-args = parser.parse_args()
-'''
 
 def main():
-    #database = args.database
-    #support = int(args.minsup)/100
-    #partition = int(args.partition)
     
     database = ["retail"]
     support = [40]
@@ -45,7 +34,7 @@ def main():
 
     for f in database:
         for s in support:
-            res = distFreno("./databases/{}.txt".format(database), support, sc, partition)
+            res = distFreno("./databases/{}.txt".format(f), s, sc, partition)
             print(res)
     
     sc.stop()

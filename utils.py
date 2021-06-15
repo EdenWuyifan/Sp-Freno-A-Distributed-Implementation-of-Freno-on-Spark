@@ -2,7 +2,6 @@ from pyspark import RDD, SparkConf, SparkContext
 import os
 import numpy as np
 import math
-import argparse
 
 from tree import Tree, TreeNode
 import threading
@@ -12,12 +11,6 @@ from pyspark.sql import SparkSession
 from pyspark.sql.types import *
 import time
 
-
-parser = argparse.ArgumentParser(description='argparse')
-parser.add_argument('--database', '-d', help='database name', required=True)
-parser.add_argument('--minsup', '-m', help='min support percentage', required=True)
-parser.add_argument('--partition', '-p', help='num of workers', required=True)
-args = parser.parse_args()
 
 
 def scanDB(path, seperation):
@@ -63,8 +56,10 @@ def distFreno(inFile, min_sup, sc, k):
     transData = transData.map(lambda v: v[1])
     
     transData = transData.groupBy(lambda v: int(v[0])%k).map(lambda v : (v[0], list(v[1]))).collect()#.sortByKey()
-    print(transData[0][1][:5])
-    
+    print(transData[2][1][:5])
+    print(transData[3][1][:5])
+    print(transData[4][1][:5])
+    print(transData[5][1][:5])
     
     #print("transaction data num of keys:", transData.count())
 
@@ -76,7 +71,7 @@ def distFreno(inFile, min_sup, sc, k):
     # print(itemTidsParts.take(5))
 
     #phase 3: Freno from k-itemsets
-    freqRange = sc.parallelize(range(0, k-1))
+    freqRange = sc.parallelize(range(0, k)).repartition(sc.defaultParallelism * 4)
     freqItemsListToRun = freqRange.map(\
         lambda v: transData[v])
 
